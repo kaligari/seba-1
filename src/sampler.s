@@ -4,29 +4,36 @@
 
 addr_low = $a0
 addr_high = $a1
-tmp_start_high = $a6
-tmp_end_high = $a7
-idx = $a8
 
-; Tablica 7 elementów po 2 bajty
-sample_table = $a9
+sample_idx = $a8
+tmp_sample_idx = $a9
 
 ; Dane tabeli (little-endian)
 sample_table_data:
-    ; 1. sampel
-    .word 4050    ; addr $aa, początek loopa 50xx, koniec 40xx
-    ; 2. sampel
-    .word 4858    ; addr $ac, koniec loopa 58xx, koniec 48xx
-    ; 3. sampel
-    .word 5058    ; addr $af, koniec loopa 58xx, koniec 48xx
-    ; 4. sampel
-    .word 5868    ; addr $b2, koniec loopa 58xx, koniec 48xx
-    ; 5. sampel
-    .word 6070    ; addr $b5, koniec loopa 58xx, koniec 48xx
-    ; 6. sampel
-    .word 6878    ; addr $b8, koniec loopa 58xx, koniec 48xx
-    ; 7. sampel
-    .word 7080    ; addr $bb, koniec loopa 58xx, koniec 48xx
+    ; 1. sampel, addr $aa, początek loopa 50xx, koniec 40xx
+    .byte $40
+    .byte $50
+    ; 2. sampel, addr $ac, początek loopa 58xx, koniec 48xx
+    .byte $48
+    .byte $60    
+    ; 3. sampel, addr $af, początek loopa 58xx, koniec 50xx
+    .byte $50
+    .byte $68
+    ; 4. sampel, addr $b2, początek loopa 68xx, koniec 58xx
+    .byte $58
+    .byte $70
+    ; 5. sampel, addr $b5, początek loopa 70xx, koniec 60xx
+    .byte $60
+    .byte $78
+    ; 6. sampel, addr $b8, początek loopa 78xx, koniec 68xx
+    .byte $68
+    .byte $80
+    ; 7. sampel, addr $bb, początek loopa 80xx, koniec 70xx
+    .byte $70
+    .byte $80
+    ; 8. sampel, addr $bb, początek loopa 00xx, koniec F0xx
+    .byte $40
+    .byte $80
 
 play_sample:
                 pha
@@ -36,7 +43,17 @@ play_sample:
                 lda start_high
                 sta addr_high
 
-next_byte:      lda (addr_low)
+
+sample_loop:
+                sei
+                lda sample_idx
+                cmp #%10000000
+                cli
+
+                beq next_byte
+
+next_byte:
+                lda (addr_low)
                 sta DDRB
                 jsr delay_125us
 
@@ -46,19 +63,23 @@ next_byte:      lda (addr_low)
 
 skip_high_inc:  lda addr_low
                 cmp end_low
-                bne next_byte
+                bne sample_loop
                 lda addr_high
                 cmp end_high
-                bne next_byte
+                bne sample_loop
+
+                lda #%10000000
+                sta sample_idx
                 
                 pla
-                rts
+
+                jmp handle_keyboard
 ; -----------------------------
 ; Opóźnienie ~125 µs (dla 2 MHz)
 ; -----------------------------
 delay_125us:
         ; ldy #$2A
-        ldy #$1B
+        ldy #$1A
 wait:
         dey
         bne wait

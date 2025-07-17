@@ -20,6 +20,8 @@ kb_wptr  = $0000
 kb_rptr  = $0001
 kb_flags = $0002
 
+tmp_start_high = $a6
+tmp_end_high = $a7
 
 start:
                 ; Initialize stack pointer
@@ -49,6 +51,7 @@ via_init:
                 lda #$00
                 sta start_low
                 sta end_low
+                sta sample_idx
                 lda #$40
                 sta start_high
                 sta tmp_start_high
@@ -59,6 +62,23 @@ via_init:
                 jsr play_sample
 
 handle_keyboard:
+                jmp handle_keyboard
+                
+                sei
+                lda sample_idx
+                cmp #%10000000
+                cli
+                beq end_hdl_kbrd
+
+                lda tmp_start_high
+                sta start_high
+
+                lda tmp_end_high
+                sta end_high
+                
+                jsr play_sample
+end_hdl_kbrd:   jmp handle_keyboard
+
                 sei
                 lda kb_rptr
                 cmp kb_wptr
