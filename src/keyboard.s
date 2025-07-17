@@ -7,11 +7,8 @@ KEYB_PCR = PCR_AB
 KEYB_IFA = IFA_AB
 KEYB_IER = IER_AB
 
-RELEASE     = %00000001
-NRELEASE     = %11111110
+kb_flags = $0002
 
-kb_buffer = $0200       ; 256-bytes kb buffer 0x0200 - 0x02ff
-            
 irq:
                 sei                
                 pha
@@ -83,10 +80,8 @@ handle_f8:      cmp #$0A
 handle_end:     jmp exit
 
 get_sample_config:
-                stx sample_idx
-                
                 lda sample_table_data, x
-                sta start_high
+                sta addr_high
                 inx
                 lda sample_table_data, x
                 sta end_high

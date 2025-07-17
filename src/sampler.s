@@ -5,8 +5,10 @@
 addr_low = $a0
 addr_high = $a1
 
+end_low = $a4
+end_high = $a5
+
 sample_idx = $a8
-tmp_sample_idx = $a9
 
 ; Dane tabeli (little-endian)
 sample_table_data:
@@ -38,16 +40,12 @@ sample_table_data:
 play_sample:
                 pha
 
-                lda start_low
+                lda #0
                 sta addr_low
-                lda start_high
-                sta addr_high
-
 
 sample_loop:
                 sei
-                lda sample_idx
-                cmp #%10000000
+
                 cli
 
                 beq next_byte
@@ -63,23 +61,20 @@ next_byte:
 
 skip_high_inc:  lda addr_low
                 cmp end_low
-                bne sample_loop
+                bne next_byte
                 lda addr_high
                 cmp end_high
-                bne sample_loop
+                bne next_byte
 
-                lda #%10000000
-                sta sample_idx
-                
                 pla
 
-                jmp handle_keyboard
+                jmp loop
 ; -----------------------------
-; Opóźnienie ~125 µs (dla 2 MHz)
+; Delay
 ; -----------------------------
 delay_125us:
         ; ldy #$2A
-        ldy #$1A
+        ldy #$1c
 wait:
         dey
         bne wait
