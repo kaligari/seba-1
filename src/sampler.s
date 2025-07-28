@@ -10,30 +10,30 @@ end_high = $a5
 
 sample_idx = $a8
 
-; Dane tabeli (little-endian)
+; samples start and end pointers
 sample_table_data:
-    ; 1. sampel, addr $aa, początek loopa 50xx, koniec 40xx
+    ; 1. sample, F1 key, loop start $40xx, end $50xx
     .byte $40
     .byte $50
-    ; 2. sampel, addr $ac, początek loopa 58xx, koniec 48xx
+    ; 2. sample, F2 key, loop start $48xx, end $60xx
     .byte $48
     .byte $60    
-    ; 3. sampel, addr $af, początek loopa 58xx, koniec 50xx
+    ; 3. sample, F3 key, loop start $50xx, end $68xx
     .byte $50
     .byte $68
-    ; 4. sampel, addr $b2, początek loopa 68xx, koniec 58xx
+    ; 4. sample, F4 key, loop start $58xx, end $70xx
     .byte $58
     .byte $70
-    ; 5. sampel, addr $b5, początek loopa 70xx, koniec 60xx
+    ; 5. sample, F5 key, loop start $60xx, end $78xx
     .byte $60
     .byte $78
-    ; 6. sampel, addr $b8, początek loopa 78xx, koniec 68xx
+    ; 6. sample, F6 key, loop start $68xx, end $80xx
     .byte $68
     .byte $80
-    ; 7. sampel, addr $bb, początek loopa 80xx, koniec 70xx
+    ; 7. sample, F7 key, loop start $70xx, end $80xx
     .byte $70
     .byte $80
-    ; 8. sampel, addr $bb, początek loopa 00xx, koniec F0xx
+    ; 8. sample, F8 key, loop start $40xx, end $80xx
     .byte $40
     .byte $80
 
@@ -53,7 +53,7 @@ sample_loop:
 next_byte:
                 lda (addr_low)
                 sta DDRB
-                jsr delay_125us
+                jsr delay
 
                 inc addr_low
                 bne skip_high_inc
@@ -72,8 +72,7 @@ skip_high_inc:  lda addr_low
 ; -----------------------------
 ; Delay
 ; -----------------------------
-delay_125us:
-        ; ldy #$2A
+delay:
         ldy #$1c
 wait:
         dey
