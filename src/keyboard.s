@@ -37,57 +37,6 @@ read_key:
 
 key_not_release:
 
-handle_f1:      cmp #$05
-                bne handle_f2
-                ldx #0
-                jmp get_sample_config
-
-handle_f2:      cmp #$06
-                bne handle_f3
-                ldx #2
-                jmp get_sample_config
-
-handle_f3:      cmp #$04
-                bne handle_f4
-                ldx #4
-                jmp get_sample_config
-
-handle_f4:      cmp #$0C
-                bne handle_f5
-                ldx #6
-                jmp get_sample_config
-
-handle_f5:      cmp #$03
-                bne handle_f6
-                ldx #8
-                jmp get_sample_config
-
-handle_f6:      cmp #$0b
-                bne handle_f7
-                ldx #10
-                jmp get_sample_config
-
-handle_f7:      cmp #$83
-                bne handle_f8
-                ldx #12
-                jmp get_sample_config
-
-handle_f8:      cmp #$0A
-                bne handle_end
-                ldx #14
-                jmp get_sample_config
-
-handle_end:     jmp exit
-
-get_sample_config:
-                lda sample_table_data, x
-                sta addr_high
-                inx
-                lda sample_table_data, x
-                sta end_high
-
-                jmp play_sample
-
 exit:           pla
                 tax
                 pla

@@ -37,9 +37,10 @@ lcd_send_msg:
                 inx
                 jmp lcd_send_msg
 lcd_done:
-                jmp RESET
+                rts
 
 lcd_message: .asciiz "Hello, world!"
+
 ; Subroutines
 lcd_instruction:
                 tay             ; copy A to Y, because A will be modified

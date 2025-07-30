@@ -29,24 +29,27 @@ via_init:
                 sta DDRB
                 lda #%00000000  ; Set all pins on port A to input
                 sta DDRA
+                
+                jsr lcd_setup
+                
+                cld                     ; Clear decimal arithmetic mode.
+                cli
 
-                lda #$00
-                sta end_low
-                lda #$40
-                sta addr_high
-                lda #$80
-                sta end_high
-
-                jsr play_sample
-
+                lda     #$1F           ; 8-N-1, 19200 baud.
+                sta     ACIA_CTRL
+                lda     #$0B           ; No parity, no echo, no interrupts.
+                sta     ACIA_CMD
+                
 loop:
-                jmp loop
+                jmp RESET
 
 
-.include "keyboard.s"
-; .include "lcd.s"
-.include "sampler.s"
+.include "lcd.s"
+; .include "keyboard.s"
 .include "wozmon.s"
+
+irq:
+                jmp start
 
 .segment "RESETVEC"
                 .word   $0F00          ; NMI vector
