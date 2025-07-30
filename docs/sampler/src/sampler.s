@@ -52,7 +52,7 @@ sample_loop:
 
 next_byte:
                 lda (addr_low)
-                sta DDRB
+                sta PORTA
                 jsr delay
 
                 inc addr_low
@@ -73,7 +73,7 @@ skip_high_inc:  lda addr_low
 ; Delay
 ; -----------------------------
 delay:
-        ldy #$1c
+        ldy #$0A
 wait:
         dey
         bne wait
