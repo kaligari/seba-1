@@ -10,8 +10,8 @@ acia_init:
                 lda     #$00
                 sta     ACIA_DATA
 
-                lda     #$38           ; 0b00111000: N-7-1, 19200 baud.
+                lda     #$38           ; 0011 1000: N-7-1, 19200 baud.
                 sta     ACIA_CTRL
-                lda     #$0B           ; 0b0000 1011: No parity, no echo, no interrupts.
+                lda     #$09           ; 0000 1001: No parity, no echo, rx interrupts
                 sta     ACIA_CMD
                 rts
